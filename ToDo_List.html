@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html ng-app="TodoApp" >
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">                
+        <script>
+            (function () { 
+            'use strict';
+            angular.module('TodoApp', []).controller('TodoCtrl', Controller); 
+            Controller.$inject = ['$scope']; 
+            function Controller($scope) {
+                var vm = this; 
+            vm.works = [{"isSelect": false, "text": "Test Item 1"}];
+            vm.currentWork = "";
+            vm.deleteWork = deleteWork;
+            vm.addWork = addWork;
+            vm.deleteAllWork = deleteAllWork;
+            vm.checkEnter = checkEnter;
+            vm.selectAllTodo = selectAllTodo;
+            function addWork() {
+            vm.works.push({
+            isSelect: false,
+                    text: angular.copy(vm.currentWork)
+            });
+            vm.currentWork = "";
+            }
+
+            function deleteWork() {
+            var temp = angular.copy(vm.works);
+            var count = 0;
+            vm.works = [];
+            angular.forEach(temp, function (elem, index) {
+            if (!elem.isSelect) {
+            vm.works.push(elem);
+            } else {
+            count++;
+            }
+            });
+            if (count === temp.length) {
+            vm.checkAll = false;
+            }
+            }
+
+            function deleteAllWork() {
+
+            console.log(angular.toJson(vm.works));
+            vm.works = [];
+            }
+
+            function checkEnter(event) {
+            if (event.key === "Enter") {
+            vm.addWork();
+            }
+            }
+
+            function selectAllTodo(bool) {
+            var count = 0;
+            angular.forEach(vm.works, function (elem, index) {
+            if (bool) {
+            if (vm.checkAll) {
+            elem.isSelect = true;
+            } else {
+            elem.isSelect = false;
+            }
+            } else {
+            if (elem.isSelect){
+            count++;
+            }
+            }
+            });
+            if (!bool) {
+            console.log(count, vm.works.length);
+            if (count === vm.works.length) {
+            vm.checkAll = true;
+            } else {
+            vm.checkAll = false;
+            }
+            }
+
+            }
+
+              }
+
+            })(); 
+        </script>
+        <style>
+            .todo-wrapper{
+                width:100%;
+                max-width: 500px;
+                margin: 0px auto;
+            }
+            .btn-wrapper{
+                width:100%;
+            }
+            .btn-wrapper .btn{
+                margin: 15px 0px;
+            }
+
+            .btn-wrapper .btn{
+                max-width: 220px;
+                margin: 15px;
+            }
+
+            .doto-list-wrapper{
+                margin: 0px 15px;
+                float: left;
+            }
+            .todo-input-wrapper{
+                margin: 0px 15px;                
+            }
+            .btn-wrapper .input-group{
+                padding-left: 28px;
+                float: left;
+                margin-top: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="todo-wrapper">                
+                <div ng-controller="TodoCtrl as vm" class="col-xs-12">             <!-- controller -->      
+                    <div class="row">
+                        <div class="todo-input-wrapper">
+                            <h1>Todo List</h1>
+                            <div class="form-group">                            
+                                <div class="input-group">
+                                    <div class="input-group-addon">Add Todo</div>
+                                    <input type="text" class="form-control" id="todoText" placeholder="Todo" ng-model="vm.currentWork" ng-keyup="vm.checkEnter($event)"/>                                
+                                </div>                                
+                            </div>
+                        </div>
+                        <div class="btn-wrapper">                                                             
+                            <div class="input-group col-xs-6">
+                                <input type="checkbox" ng-click="vm.selectAllTodo(true)" ng-disabled="vm.works < 1" ng-model="vm.checkAll"/>   
+                                Select All
+                            </div>
+                            <input type="button" ng-click="vm.addWork()" value="Add"  class="btn btn-primary col-xs-6"/>                                
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="doto-list-wrapper">
+                            <div class="form-group" ng-repeat="work in vm.works">
+                                <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <input type="checkbox" ng-model="work.isSelect"  ng-click="vm.selectAllTodo(false)"/>
+                                    </div>
+                                    <input type="text" class="form-control"  placeholder="Work" value="{{work.text}}">                            
+                                </div>                        
+                            </div>
+                        </div>
+                        <div class="btn-wrapper">                                                            
+                            <input type="button" value="Remove" ng-click="vm.deleteWork()"  class="btn btn-primary col-xs-6"/>
+                            <input type="button" value="Remove All" ng-click="vm.deleteAllWork()"  class="btn btn-primary col-xs-6" ng-disabled="vm.works < 1"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<!-- the hole html is view -->
